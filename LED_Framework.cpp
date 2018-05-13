@@ -6,22 +6,27 @@
 
 CRGB STRIP_LEDs[NUM_LEDS];
 CRGB Foreground;
-
+#ifdef POLE
 LEDStrip Strips[4]{
 	{ 3,57 },
-	{116,62},
-{121, 175},
-{232, 178}
+{ 116,62 },
+{ 121, 175 },
+{ 232, 178 }
 };
-
+#else
+LEDStrip Strips[2]{
+	{ 29,0 },
+{30, 59}
+};
+#endif
+bool bypassBrightness = false;
 bool stateOn = true;
 uint8_t brightness;
 StopWatch FrameTimer;
-uint8_t FrameTime = 25;
+uint8_t FrameTime;
 uint16_t global_param;
 uint8_t numStrips = sizeof(Strips) / sizeof(Strips[0]);
 String effectString;
-
 
 void(*Effect)();
 
@@ -41,7 +46,9 @@ void LEDSetup()
 	FastLED.setMaxPowerInVoltsAndMilliamps(5, MAX_CURRENT);
 	FastLED.setCorrection(TypicalPixelString);
 	FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(STRIP_LEDs, NUM_LEDS);
-	Foreground = CRGB(32,0,0);
+	setFrameRate(30);
+	FastLED.setMaxRefreshRate(120, true);
+	Foreground = CRGB(32, 0, 0);
 	Effect = SOLID;
 }
 
@@ -51,8 +58,8 @@ void LEDLoop()
 	{
 		FrameTimer.reset();
 		Effect();
-		FastLED.show();
 	}
+	FastLED.show();
 }
 
 bool Roll(unsigned int chance)
@@ -63,12 +70,16 @@ bool Roll(unsigned int chance)
 uint8_t stripWraparound(int idx)
 {
 	while (idx >= numStrips) idx -= numStrips;
-	while (idx < 0 ) idx += numStrips;
+	while (idx < 0) idx += numStrips;
 }
 
 void setBrightness(uint8_t newBright)
 {
 	brightness = newBright;
+	if (bypassBrightness)
+	{
+		return;
+	}
 	FastLED.setBrightness(brightness);
 }
 
@@ -79,6 +90,8 @@ void setFrameRate(float FPS)
 
 LEDStrip::LEDStrip(uint8_t start, uint8_t stop)
 {
+	if (start > (NUM_LEDS - 1)) start = NUM_LEDS - 1;
+	if (stop > (NUM_LEDS - 1)) stop = NUM_LEDS - 1;
 	if (stop > start) //We are going forward
 	{
 		size = stop - start + 1;

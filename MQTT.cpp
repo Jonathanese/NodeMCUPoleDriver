@@ -45,9 +45,6 @@ void reconnect() {
 	}
 }
 
-
-
-
 void publish(char* buffer)
 {
 	client.publish(SECRET_MQTT_STATE_TOPIC, buffer, true);

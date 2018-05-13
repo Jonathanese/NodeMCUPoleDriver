@@ -1,9 +1,8 @@
-// 
-// 
-// 
+//
+//
+//
 
 #include "Animations.h"
-
 
 void callback(char* topic, byte* payload, unsigned int length)
 {
@@ -43,6 +42,7 @@ bool processJson(char* message) {
 			if (stateOn)
 			{
 				stateOn = false;
+				setBrightness(0);
 			}
 		}
 	}
@@ -85,31 +85,34 @@ void sendState() {
 	delete buffer;
 }
 
-
 void ChangeEffect(String effect)
 {
-	if (effect == "fire")
+	if (effect.equals("fire"))
 	{
-		setEffect(FIRE,"fire");
+		setEffect(FIRE, "fire");
 		return;
 	}
-	if (effect == "coals")
+	if (effect.equals("coals"))
 	{
 		setEffect(COALS, "coals");
 		return;
 	}
-	if (effect == "solid")
+	if (effect.equals("fireflies"))
 	{
-		setEffect(SOLID,"solid");
+		setEffect(FIREFLIES, "fireflies");
 		return;
 	}
-	if (effect == "none")
+	if (effect.equals("solid"))
+	{
+		setEffect(SOLID, "solid");
+		return;
+	}
+	if (effect.equals("none"))
 	{
 		setEffect(SOLID, "none");
 		return;
 	}
 }
-
 
 void TEST_RUN()
 {
@@ -145,8 +148,7 @@ void TEST_BORDER()
 	}
 }
 
-#define FIRE_COOLING  40
-#define FIRE_SPARKING 40
+
 
 #define MIDPOINT 96
 
@@ -166,15 +168,13 @@ CRGB fireColor(uint8_t heat, CRGB Spark, CRGB Flame)
 	}
 }
 
-
-
 void FIRE()
 {
 	for (uint8_t s = 0; s < numStrips; s++)
 	{
 		// Step 1.  Cool down every cell a little
 		for (uint8_t i = 0; i < Strips[s].size; i++) {
-			Strips[s].LEDs[i].param = qsub8(Strips[s].LEDs[i].param, random8(0, ((FIRE_COOLING * 10) / Strips[s].size) + 2));
+			Strips[s].LEDs[i].param = qsub8(Strips[s].LEDs[i].param, random8(0, (FIRE_COOLING / Strips[s].size) + 2));
 		}
 
 		// Step 2.  Heat from each cell drifts 'up' and diffuses a little
@@ -197,15 +197,11 @@ void FIRE()
 		// Step 4.  Map from heat cells to LED colors
 		for (uint8_t j = 0; j < Strips[s].size; j++)
 		{
-
 			//CRGB color = ColorFromPalette(firecolors, Strips[s].LEDs[j].param);
 			Strips[s].setColor(j, fireColor(Strips[s].LEDs[j].param, CRGB(255, 255, 0), Foreground));
 		}
 	}
 }
-
-#define COALS_COOLING  1
-#define COALS_SPARKS 5
 
 
 
@@ -235,17 +231,41 @@ void COALS()
 		for (int k = 0; k < COALS_SPARKS; k++)
 		{
 			y = random8(Strips[s].size);
-			Strips[s].LEDs[y].param += random16(2048);
+			Strips[s].LEDs[y].param += random16(8192);
 		}
 
 		// Step 4.  Map from heat cells to LED colors
 		for (uint8_t j = 0; j < Strips[s].size; j++)
 		{
-
 			//CRGB color = ColorFromPalette(firecolors, Strips[s].LEDs[j].param);
 			Strips[s].setColor(j, Foreground.lerp16(CRGB::Black, 65535 - Strips[s].getParam(j)));
+		}
+	}
+}
 
 
+void FIREFLIES()
+{
+	for (uint8_t s = 0; s < numStrips; s++)
+	{
+		for (uint8_t l= 0; l < Strips[s].size; l++)
+		{
+		
+			if ((s < 2) && Roll(FIREFLIES_CHANCE))
+			{
+				Strips[s].LEDs[l].param = 255;
+			}
+			else if (Strips[s].LEDs[l].param > 255)
+			{
+				Strips[s].LEDs[l].param = 0;
+			}
+			else if (Strips[s].LEDs[l].param > 0)
+			{
+				Strips[s].LEDs[l].param -= 10;
+			}
+		
+			Strips[s].setColor(l, Foreground.lerp8(CRGB::Black, 240).lerp8(CRGB::Yellow, 255 - cos8(Strips[s].LEDs[l].param)));
+		
 		}
 	}
 }

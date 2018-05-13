@@ -9,6 +9,7 @@
 #include "WProgram.h"
 #endif
 #include "secrets.h"
+#include "Config.h"
 
 //These must be defined before FastLED.h
 
@@ -19,12 +20,20 @@
 #include "StopWatch.h"
 #include <vector>
 
-#define MAX_CURRENT 10000
+
+
 #define COLOR_ORDER GRB
 #define LED_TYPE WS2812B
+
+#ifdef POLE
+#define MAX_CURRENT 12000
 #define NUM_LEDS 240
 #define DATA_PIN 7
-
+#else
+#define MAX_CURRENT 2000
+#define NUM_LEDS 60
+#define DATA_PIN 5
+#endif
 extern StopWatch FrameTimer;
 
 typedef struct LED
@@ -51,13 +60,14 @@ extern CRGB Foreground;
 extern uint16_t global_param;
 extern uint8_t numStrips;
 extern uint8_t brightness;
-
+bool Roll(unsigned int chance);
 uint8_t stripWraparound(int idx);
-
+extern bool bypassBrightness;
 void LEDSetup();
 void LEDLoop();
 
 void setBrightness(uint8_t newBright);
+void setFrameRate(float FPS);
 
 void SOLID();
 void setEffect(void(*NewEffect)(), String EffString);
