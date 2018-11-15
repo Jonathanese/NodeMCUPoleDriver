@@ -295,7 +295,7 @@ void LIGHTNING()
 		{
 			PARAM = 255; //Create lightning
 		}
-
+		setBrightness(brightnessState);
 	}
 	else
 	{

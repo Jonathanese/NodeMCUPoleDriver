@@ -1,7 +1,7 @@
 #pragma once
 
 
-#define POLE1
+#define DESK
 
 #ifdef TEST
 #define SECRET_MQTT_STATE_TOPIC "ledstrip/TEST"
