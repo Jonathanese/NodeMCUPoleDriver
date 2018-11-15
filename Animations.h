@@ -22,5 +22,6 @@ void TEST_BORDER();
 void FIRE();
 void COALS();
 void FIREFLIES();
+void LIGHTNING();
 
 #endif

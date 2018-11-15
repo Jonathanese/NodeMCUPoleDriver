@@ -3,6 +3,7 @@
 //
 
 #include "Animations.h"
+#include "ArduinoJson.h"
 
 void callback(char* topic, byte* payload, unsigned int length)
 {
@@ -22,10 +23,12 @@ void callback(char* topic, byte* payload, unsigned int length)
 	sendState();
 }
 
+uint8_t brightnessState = 0;
+
 bool processJson(char* message) {
 	StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
 	JsonObject& root = jsonBuffer.parseObject(message);
-
+	
 	if (!root.success()) {
 		Serial.println("parseObject() failed");
 		return false;
@@ -53,6 +56,7 @@ bool processJson(char* message) {
 
 	if (root.containsKey(F("brightness"))) {
 		brightness = root[F("brightness")];
+		brightnessState = brightness;
 		setBrightness(brightness);
 	}
 
@@ -87,6 +91,11 @@ void sendState() {
 
 void ChangeEffect(String effect)
 {
+	if (effect.equals("lightning"))
+	{
+		setEffect(LIGHTNING, "lightning");
+		return;
+	}
 	if (effect.equals("fire"))
 	{
 		setEffect(FIRE, "fire");
@@ -112,6 +121,7 @@ void ChangeEffect(String effect)
 		setEffect(SOLID, "none");
 		return;
 	}
+
 }
 
 void TEST_RUN()
@@ -210,9 +220,13 @@ void COALS()
 	for (uint8_t s = 0; s < numStrips; s++)
 	{
 		// Step 1.  Cool down every cell a little
-		//for (uint8_t i = 0; i < Strips[s].size; i++) {
-		//	Strips[s].LEDs[i].param = qsub8(Strips[s].LEDs[i].param, Roll(COALS_COOLING)&& Roll(COALS_COOLING));
-		//}
+		for (uint8_t i = 0; i < Strips[s].size; i++) {
+			//if (Roll(COALS_COOLING))
+			//{
+					Strips[s].LEDs[i].param -= random16(COALS_COOLING); //= qsub8(Strips[s].LEDs[i].param, Roll(COALS_COOLING) && Roll(COALS_COOLING));
+			//}
+			
+		}
 
 		// Step 2.  Heat from each cell drifts 'up' and diffuses a little
 		for (int k = Strips[s].size - 1; k >= 0; k--)
@@ -231,7 +245,7 @@ void COALS()
 		for (int k = 0; k < COALS_SPARKS; k++)
 		{
 			y = random8(Strips[s].size);
-			Strips[s].LEDs[y].param += random16(8192);
+			Strips[s].LEDs[y].param += random16(COALS_SPARK_HEAT);
 		}
 
 		// Step 4.  Map from heat cells to LED colors
@@ -268,4 +282,36 @@ void FIREFLIES()
 		
 		}
 	}
+}
+
+void LIGHTNING()
+{
+	static int16_t PARAM = 0;
+	static uint8 val = 0;
+	//TODO: Consider reversing the function of param so it increases instead of decreases. This may allow use of an unsigned variable.
+	if (PARAM <= 0)
+	{
+		if (Roll(LIGHTNING_CHANCE))
+		{
+			PARAM = 255; //Create lightning
+		}
+
+	}
+	else
+	{
+		val = Roll(1000) ? random8(8)*PARAM / 8 : 0;
+		setBrightness(brightnessState + (val*(0xff - brightnessState)));
+
+	}
+	for (uint8_t s = 0; s < numStrips; s++)
+	{
+		for (uint8_t p = 0; p < Strips[s].size; p++)
+		{
+			Strips[s].setColor(p, Foreground.lerp8(CRGB::White, val));
+		}
+	}
+
+	PARAM -= 10;
+	if (PARAM < 0) { PARAM = 0; } //param must currently be signed in order to do sub-zero checks.
+
 }

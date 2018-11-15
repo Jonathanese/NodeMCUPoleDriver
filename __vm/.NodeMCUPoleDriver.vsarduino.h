@@ -1,5 +1,5 @@
 /* 
-	Editor: http://www.visualmicro.com
+	Editor: https://www.visualmicro.com/
 			visual micro and the arduino ide ignore this code during compilation. this code is automatically maintained by visualmicro, manual changes to this file will be overwritten
 			the contents of the Visual Micro sketch sub folder can be deleted prior to publishing a project
 			all non-arduino files created by visual micro and all visual studio project or solution files can be freely deleted and are not required to compile a sketch (do not delete your own code!).
@@ -19,7 +19,7 @@
 #define F_CPU 160000000L
 #define LWIP_OPEN_SRC
 #define TCP_MSS 536
-#define ARDUINO 10805
+#define ARDUINO 10807
 #define ARDUINO_ESP8266_NODEMCU
 #define ARDUINO_ARCH_ESP8266
 #define ESP8266
