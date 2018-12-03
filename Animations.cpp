@@ -197,7 +197,7 @@ void FIRE()
 				) / 11;
 		}
 
-		// Step 3.  Randomly ignite new 'sparks' of heat near the bottom
+		// Step 3.  Randomly ignite new sparks of heat near the bottom
 		if (random8() < FIRE_SPARKING)
 		{
 			uint8_t y = random8(2);

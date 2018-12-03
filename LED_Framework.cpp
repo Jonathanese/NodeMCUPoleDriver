@@ -6,19 +6,9 @@
 
 CRGB STRIP_LEDs[NUM_LEDS];
 CRGB Foreground;
-#ifdef POLE
-LEDStrip Strips[4]{
-	{ 3,57 },
-{ 116,62 },
-{ 121, 175 },
-{ 232, 178 }
-};
-#else
-LEDStrip Strips[2]{
-	{ 29,0 },
-{30, 59}
-};
-#endif
+
+LEDStrip STRIP_CONFIG
+
 bool bypassBrightness = false;
 bool stateOn = true;
 uint8_t brightness;

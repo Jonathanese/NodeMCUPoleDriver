@@ -1,7 +1,7 @@
 #pragma once
 
 
-#define DESK
+#define HALLWAY
 
 #ifdef TEST
 #define SECRET_MQTT_STATE_TOPIC "ledstrip/TEST"
@@ -33,6 +33,7 @@
 #define FIRE_SPARKING 40
 
 #define POLE
+#define STRIP_CONFIG Strips[4]{{ 3, 57 },{ 116,62 },{ 121, 175 },{ 232, 178 }};
 #endif
 
 #ifdef TV_STAND
@@ -48,6 +49,8 @@
 #define FIRE_COOLING  400
 #define FIRE_SPARKING 40
 
+#define STRIP_CONFIG Strips[2]{{ 29, 0 },{ 30, 59 }};
+
 #endif
 
 #ifdef HALLWAY
@@ -60,8 +63,11 @@
 #define COALS_COOLING  600
 #define COALS_SPARKS 2
 #define COALS_SPARK_HEAT 10000
-#define FIRE_COOLING  400
-#define FIRE_SPARKING 40
+#define FIRE_COOLING  500
+#define FIRE_SPARKING 50
+
+//#define STRIP_CONFIG Strips[2]{{ 29, 0 },{ 30, 59 }};
+#define STRIP_CONFIG Strips[1]{{ 0, 59 }};
 
 #endif
 
@@ -78,6 +84,8 @@
 #define FIRE_COOLING  400
 #define FIRE_SPARKING 40
 
+#define STRIP_CONFIG Strips[2]{{ 29, 0 },{ 30, 59 }};
+
 #endif
 
 #ifdef DESK
@@ -92,5 +100,7 @@
 #define COALS_SPARK_HEAT 10000
 #define FIRE_COOLING  400
 #define FIRE_SPARKING 40
+
+#define STRIP_CONFIG Strips[2]{{ 29, 0 },{ 30, 59 }};
 
 #endif
