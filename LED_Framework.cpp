@@ -3,6 +3,7 @@
 //
 
 #include "LED_Framework.h"
+#include "Config.h"
 
 CRGB STRIP_LEDs[NUM_LEDS];
 CRGB Foreground;
@@ -36,17 +37,16 @@ void LEDSetup()
 	FastLED.setMaxPowerInVoltsAndMilliamps(5, MAX_CURRENT);
 	FastLED.setCorrection(TypicalPixelString);
 	FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(STRIP_LEDs, NUM_LEDS);
-	setFrameRate(30);
-	FastLED.setMaxRefreshRate(120, true);
+	setFrameRate(4);
+	FastLED.setMaxRefreshRate(100, true);
 	Foreground = CRGB(32, 0, 0);
 	Effect = SOLID;
 }
 
 void LEDLoop()
 {
-	if (FrameTimer.getTime() > FrameTime)
+	if (FrameTimer.repeat(FrameTime))
 	{
-		FrameTimer.reset();
 		Effect();
 	}
 	FastLED.show();

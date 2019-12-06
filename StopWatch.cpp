@@ -13,7 +13,7 @@ StopWatch::StopWatch()
 StopWatch::StopWatch(bool started)
 {
 	reset();
-	started ? start() : stop();
+	started ? (void)start() : (void)stop();
 }
 
 StopWatch::~StopWatch()
@@ -25,29 +25,48 @@ void StopWatch::reset()
 	time = millis();
 }
 
-void StopWatch::reset(uint32_t startTime)
+void StopWatch::reset(unsigned long startTime)
 {
 	time = millis() - startTime;
 }
 
-uint32_t StopWatch::getTime()
+unsigned long StopWatch::getTime()
 {
 	return millis() - time;
 }
 
-void StopWatch::start()
+bool StopWatch::start()
 {
 	if (!isRunning)
 	{
 		isRunning = true;
 		reset();
+		return true;
 	}
+	return false;
 }
 
-void StopWatch::stop()
+bool StopWatch::stop()
 {
 	if (isRunning)
 	{
 		isRunning = false;
+		return true;
 	}
+	return false;
+}
+
+bool StopWatch::passed(unsigned long compareTime)
+{
+	return (this->getTime() > compareTime);
+}
+
+bool StopWatch::repeat(unsigned long compareTime)
+{
+	if (this->passed(compareTime))
+	{
+		this->reset();
+		return true;
+	}
+	return false;
 }

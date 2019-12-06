@@ -14,7 +14,7 @@ void callback(char* topic, byte* payload, unsigned int length)
 	}
 	message[length] = '\0';
 
-	DebugMessage(DM_RECEIVE, "[" + String(topic) + "]: " + String(message));
+	DB.Message(DM_RECEIVE, "[" + String(topic) + "]: " + String(message));
 
 	processJson(message);
 
@@ -26,10 +26,11 @@ void callback(char* topic, byte* payload, unsigned int length)
 uint8_t brightnessState = 0;
 
 bool processJson(char* message) {
-	StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
-	JsonObject& root = jsonBuffer.parseObject(message);
-	
-	if (!root.success()) {
+	StaticJsonDocument<BUFFER_SIZE> root;
+
+	auto error = deserializeJson(root, message);
+
+	if (error) {
 		Serial.println("parseObject() failed");
 		return false;
 	}
@@ -68,12 +69,10 @@ bool processJson(char* message) {
 }
 
 void sendState() {
-	StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
-
-	JsonObject& root = jsonBuffer.createObject();
+	StaticJsonDocument<BUFFER_SIZE> root;
 
 	root["state"] = (stateOn) ? "ON" : "OFF";
-	JsonObject& color = root.createNestedObject("color");
+	JsonObject color = root.createNestedObject("color");
 	color["r"] = Foreground.r;
 	color["g"] = Foreground.g;
 	color["b"] = Foreground.b;
@@ -81,12 +80,19 @@ void sendState() {
 	root["brightness"] = brightness;
 	root["effect"] = getEffect();
 
-	char* buffer = new char[root.measureLength() + 1];
-	root.printTo(buffer, root.measureLength() + 1);
+	//This part is dumb. I have to use a string for SerializeJson, but need a const char* for publish
 
-	publish(buffer);
+	String buffer;
 
-	delete buffer;
+	serializeJson(root, buffer);
+
+	char* charbuffer = new char[buffer.length() + 1];
+
+	buffer.toCharArray(charbuffer, buffer.length() + 1);
+
+	publish(charbuffer);
+
+	delete charbuffer;
 }
 
 void ChangeEffect(String effect)
@@ -94,34 +100,45 @@ void ChangeEffect(String effect)
 	if (effect.equals("lightning"))
 	{
 		setEffect(LIGHTNING, "lightning");
+		setFrameRate(LIGHTNING_FPS);
 		return;
 	}
 	if (effect.equals("fire"))
 	{
 		setEffect(FIRE, "fire");
+		setFrameRate(FIRE_FPS);
 		return;
 	}
 	if (effect.equals("coals"))
 	{
 		setEffect(COALS, "coals");
+		setFrameRate(COALS_FPS);
 		return;
 	}
 	if (effect.equals("fireflies"))
 	{
 		setEffect(FIREFLIES, "fireflies");
+		setFrameRate(FIREFLIES_FPS);
 		return;
 	}
 	if (effect.equals("solid"))
 	{
 		setEffect(SOLID, "solid");
+		setFrameRate(NONE_FPS);
 		return;
 	}
 	if (effect.equals("none"))
 	{
 		setEffect(SOLID, "none");
+		setFrameRate(NONE_FPS);
 		return;
 	}
-
+	if (effect.equals("testborder"))
+	{
+		setEffect(TEST_BORDER, "testborder");
+		setFrameRate(NONE_FPS);
+		return;
+	}
 }
 
 void TEST_RUN()
@@ -157,8 +174,6 @@ void TEST_BORDER()
 		Strips[i].setColor(Strips[i].size - 1, CRGB::Red);
 	}
 }
-
-
 
 #define MIDPOINT 96
 
@@ -213,8 +228,6 @@ void FIRE()
 	}
 }
 
-
-
 void COALS()
 {
 	for (uint8_t s = 0; s < numStrips; s++)
@@ -223,9 +236,8 @@ void COALS()
 		for (uint8_t i = 0; i < Strips[s].size; i++) {
 			//if (Roll(COALS_COOLING))
 			//{
-					Strips[s].LEDs[i].param -= random16(COALS_COOLING); //= qsub8(Strips[s].LEDs[i].param, Roll(COALS_COOLING) && Roll(COALS_COOLING));
-			//}
-			
+			Strips[s].LEDs[i].param -= random16(COALS_COOLING); //= qsub8(Strips[s].LEDs[i].param, Roll(COALS_COOLING) && Roll(COALS_COOLING));
+	//}
 		}
 
 		// Step 2.  Heat from each cell drifts 'up' and diffuses a little
@@ -257,14 +269,12 @@ void COALS()
 	}
 }
 
-
 void FIREFLIES()
 {
 	for (uint8_t s = 0; s < numStrips; s++)
 	{
-		for (uint8_t l= 0; l < Strips[s].size; l++)
+		for (uint8_t l = 0; l < Strips[s].size; l++)
 		{
-		
 			if ((s < 2) && Roll(FIREFLIES_CHANCE))
 			{
 				Strips[s].LEDs[l].param = 255;
@@ -275,11 +285,10 @@ void FIREFLIES()
 			}
 			else if (Strips[s].LEDs[l].param > 0)
 			{
-				Strips[s].LEDs[l].param -= 10;
+				Strips[s].LEDs[l].param -= FIREFLIES_SPEED;
 			}
-		
+
 			Strips[s].setColor(l, Foreground.lerp8(CRGB::Black, 240).lerp8(CRGB::Yellow, 255 - cos8(Strips[s].LEDs[l].param)));
-		
 		}
 	}
 }
@@ -299,9 +308,8 @@ void LIGHTNING()
 	}
 	else
 	{
-		val = Roll(1000) ? random8(8)*PARAM / 8 : 0;
-		setBrightness(brightnessState + (val*(0xff - brightnessState)));
-
+		val = Roll(1000) ? random8(8) * PARAM / 8 : 0;
+		setBrightness(brightnessState + (val * (0xff - brightnessState)));
 	}
 	for (uint8_t s = 0; s < numStrips; s++)
 	{
@@ -313,5 +321,4 @@ void LIGHTNING()
 
 	PARAM -= 10;
 	if (PARAM < 0) { PARAM = 0; } //param must currently be signed in order to do sub-zero checks.
-
 }

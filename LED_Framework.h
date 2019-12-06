@@ -13,8 +13,10 @@
 
 //These must be defined before FastLED.h
 
-#define FASTLED_INTERRUPT_RETRY_COUNT 0
+//#define FASTLED_INTERRUPT_RETRY_COUNT 0
 //#define FASTLED_ALLOW_INTERRUPTS 0		// May interfere with WiFi
+
+
 
 #include <FastLED.h>
 #include "StopWatch.h"
@@ -25,14 +27,27 @@
 #define COLOR_ORDER GRB
 #define LED_TYPE WS2812B
 
+/*
+
+This is a stupid unnecessary extra step as for all intents and purposes, these should exist in Config.h.
+
+But for some reason, you get a ton of errors if you don't define them RIGHT HERE.
+
+*/
+
 #ifdef POLE
 #define MAX_CURRENT 12000
 #define NUM_LEDS 240
 #define DATA_PIN 7
+#elif defined CEILING
+#define MAX_CURRENT 12000
+#define NUM_LEDS 240
+#define DATA_PIN 5
 #else
 #define MAX_CURRENT 2000
 #define NUM_LEDS 60
 #define DATA_PIN 5
+
 #endif
 extern StopWatch FrameTimer;
 

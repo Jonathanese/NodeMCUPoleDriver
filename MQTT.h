@@ -19,5 +19,5 @@ void MQTT_Setup(MQTT_CALLBACK_SIGNATURE);
 void MQTT_Loop();
 void reconnect();
 void callback(char* topic, byte* payload, unsigned int length);
-void publish(char* buffer);
+void publish(const char* buffer);
 #endif
