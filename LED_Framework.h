@@ -70,9 +70,11 @@ extern bool bypassBrightness;
 void LEDSetup();
 void LEDLoop();
 void AdvancedShow();
+void BasicShow();
 
 void setBrightness(uint8_t newBright);
 void setFrameRate(float FPS);
+void setFrameRate(float FPS, float DFPS);
 
 void SOLID();
 void setEffect(void(*NewEffect)(), String EffString);

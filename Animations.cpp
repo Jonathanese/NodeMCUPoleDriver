@@ -98,43 +98,43 @@ void ChangeEffect(String effect)
 	if (effect.equals("lightning"))
 	{
 		setEffect(LIGHTNING, "lightning");
-		setFrameRate(LIGHTNING_FPS);
+		setFrameRate(LIGHTNING_FPS, LIGHTNING_DFPS);
 		return;
 	}
 	if (effect.equals("fire"))
 	{
 		setEffect(FIRE, "fire");
-		setFrameRate(FIRE_FPS);
+		setFrameRate(FIRE_FPS, FIRE_DFPS);
 		return;
 	}
 	if (effect.equals("coals"))
 	{
 		setEffect(COALS, "coals");
-		setFrameRate(COALS_FPS);
+		setFrameRate(COALS_FPS, COALS_DFPS);
 		return;
 	}
 	if (effect.equals("fireflies"))
 	{
 		setEffect(FIREFLIES, "fireflies");
-		setFrameRate(FIREFLIES_FPS);
+		setFrameRate(FIREFLIES_FPS, FIREFLIES_DFPS);
 		return;
 	}
 	if (effect.equals("solid"))
 	{
 		setEffect(SOLID, "solid");
-		setFrameRate(NONE_FPS);
+		setFrameRate(NONE_FPS, NONE_DFPS);
 		return;
 	}
 	if (effect.equals("none"))
 	{
 		setEffect(SOLID, "none");
-		setFrameRate(NONE_FPS);
+		setFrameRate(NONE_FPS, NONE_DFPS);
 		return;
 	}
 	if (effect.equals("testborder"))
 	{
 		setEffect(TEST_BORDER, "testborder");
-		setFrameRate(NONE_FPS);
+		setFrameRate(NONE_FPS, NONE_DFPS);
 		return;
 	}
 }

@@ -18,6 +18,9 @@ bool stateOn = true;
 uint8_t brightness;
 StopWatch FrameTimer;
 uint8_t FrameTime;
+StopWatch AnimPerfMon;
+StopWatch DitherFrameTimer;
+uint8_t DitherFrameTime;
 uint16_t global_param;
 uint8_t numStrips = sizeof(Strips) / sizeof(Strips[0]);
 String effectString;
@@ -49,12 +52,12 @@ void LEDSetup()
 	//FastLED.setCorrection(TypicalPixelString);
 	//FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(STRIP_LEDs, NUM_LEDS);
 	//FastLED.setMaxRefreshRate(50, true);
-	setFrameRate(4);
+	setFrameRate(4, 50);
 	Foreground = CRGB(32, 0, 0);
 	Effect = SOLID;
 }
 
-StopWatch AnimPerfMon;
+
 
 void LEDLoop()
 {
@@ -63,13 +66,22 @@ void LEDLoop()
 	{
 		Effect();
 		framecount++;
+#ifdef DISABLE_DITHER
+		if (FinalStrip.CanShow()) BasicShow();
+#endif
 	}
 
+#ifndef DISABLE_DITHER
 	if (FinalStrip.CanShow())
 	{
-		AdvancedShow();
-		dithercount++;
+		if (DitherFrameTimer.repeat(DitherFrameTime))
+		{
+			AdvancedShow();
+			dithercount++;
+		}
+
 	}
+#endif
 
 	if (AnimPerfMon.repeat(10000))
 	{
@@ -129,6 +141,30 @@ void AdvancedShow()
 	}
 }
 
+void BasicShow()
+{
+	uint32_t num = brightness;
+	uint32_t den = CORRECTION_PRECISION * 255;
+
+	static uint32_t p_r;
+	static uint32_t p_g;
+	static uint32_t p_b;
+
+	for (uint8_t i; i < NUM_LEDS; i++)
+	{
+		p_r = PRECISE_RED[STRIP_LEDs[i].r] * num / den;
+		p_g = PRECISE_GREEN[STRIP_LEDs[i].g] * num / den;
+		p_b = PRECISE_BLUE[STRIP_LEDs[i].b] * num / den;
+
+
+		if (p_r > 255) p_r = 255;
+		if (p_g > 255) p_g = 255;
+		if (p_b > 255) p_b = 255;
+		FinalStrip.SetPixelColor(i, RgbColor(p_r, p_g, p_b));
+	}
+	FinalStrip.Show();
+}
+
 bool Roll(unsigned int chance)
 {
 	return (random16(10000) < chance);
@@ -147,7 +183,13 @@ void setBrightness(uint8_t newBright)
 
 void setFrameRate(float FPS)
 {
+	setFrameRate(FPS, 100);
+}
+
+void setFrameRate(float FPS, float DitherFPS)
+{
 	FrameTime = 1000.0 / FPS;
+	DitherFrameTime = 1000.0 / DitherFPS;
 }
 
 LEDStrip::LEDStrip(uint8_t start, uint8_t stop)

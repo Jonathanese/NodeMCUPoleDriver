@@ -10,22 +10,28 @@
 #define FIREFLIES_CHANCE 2
 #define FIREFLIES_SPEED 20
 #define FIREFLIES_FPS 25
+#define FIREFLIES_DFPS 50
 
 #define LIGHTNING_CHANCE 4
 #define LIGHTNING_FPS 25
+#define LIGHTNING_DFPS 100
 
-#define COALS_COOLING  600
+#define COALS_COOLING  100
 #define COALS_SPARKS 2
 #define COALS_SPARK_HEAT 10000
 #define COALS_FPS 25
+#define COALS_DFPS 100
 
 #define FIRE_COOLING  400
 #define FIRE_SPARKING 40
 #define FIRE_FPS 25
+#define FIRE_DFPS 50
 
 #define NONE_FPS 4
+#define NONE_DFPS 40
 
 #define POLE
+#define DISABLE_DITHER
 
 #define STRIP_CONFIG Strips[4]{{ 0, 58 },{ 116,59 },{ 117, 174 },{ 232, 175 }};
 #endif
