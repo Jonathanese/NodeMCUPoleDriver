@@ -12,14 +12,12 @@ void callback(char* topic, byte* payload, unsigned int length)
 	for (uint8_t i = 0; i < length; i++) {
 		message[i] = (char)payload[i];
 	}
+
 	message[length] = '\0';
 
 	DB.Message(DM_RECEIVE, "[" + String(topic) + "]: " + String(message));
-
 	processJson(message);
-
 	delete message;
-
 	sendState();
 }
 
@@ -170,6 +168,10 @@ void TEST_BORDER()
 {
 	for (int i = 0; i < numStrips; i++)
 	{
+		for (int j; j < Strips[i].size; j++)
+		{
+			Strips[i].setColor(j, CRGB::Black);
+		}
 		Strips[i].setColor(0, CRGB::Green);
 		Strips[i].setColor(Strips[i].size - 1, CRGB::Red);
 	}
@@ -288,7 +290,7 @@ void FIREFLIES()
 				Strips[s].LEDs[l].param -= FIREFLIES_SPEED;
 			}
 
-			Strips[s].setColor(l, Foreground.lerp8(CRGB::Black, 240).lerp8(CRGB::Yellow, 255 - cos8(Strips[s].LEDs[l].param)));
+			Strips[s].setColor(l, Foreground.lerp8(CRGB::Black, 128).lerp8(CRGB::Yellow, 255 - cos8(Strips[s].LEDs[l].param)));
 		}
 	}
 }

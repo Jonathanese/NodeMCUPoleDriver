@@ -19,11 +19,8 @@ void MQTT_Loop()
 		WiFi_Setup();
 		return;
 	}
-
 	ArduinoOTA.handle();
-
 	reconnect();
-
 	client.loop();
 }
 

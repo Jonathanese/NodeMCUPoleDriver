@@ -11,7 +11,7 @@ void WiFi_Setup() {
 
 	if (WiFi.waitForConnectResult() != WL_CONNECTED) {
 		DB.Message(DM_ERROR, "Connection Failed! Rebooting...");
-		delay(5000);
+		//delay(5000);
 		ESP.restart();
 	}
 

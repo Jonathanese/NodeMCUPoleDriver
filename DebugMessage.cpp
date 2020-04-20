@@ -27,7 +27,7 @@
 uint8 DM_MASK;
 
 //Instantiate global
-Debug DB(115200,
+Debug DB(921600,
 	DM_ERROR
 	| DM_TIMING
 	| DM_INFO

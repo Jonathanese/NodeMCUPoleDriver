@@ -48,6 +48,9 @@
     <ClInclude Include="PerfMon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Color_Correction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DebugMessage.cpp">

@@ -1,6 +1,6 @@
 #pragma once
 
-#define STRIP2
+#define POLE1
 
 #ifdef POLE1
 #define SECRET_MQTT_STATE_TOPIC "ledstrip/pole1"
@@ -9,25 +9,23 @@
 
 #define FIREFLIES_CHANCE 2
 #define FIREFLIES_SPEED 20
-#define FIREFLIES_FPS 15
+#define FIREFLIES_FPS 25
 
 #define LIGHTNING_CHANCE 4
-#define LIGHTNING_FPS 30
+#define LIGHTNING_FPS 25
 
 #define COALS_COOLING  600
 #define COALS_SPARKS 2
 #define COALS_SPARK_HEAT 10000
-#define COALS_FPS 15
+#define COALS_FPS 25
 
 #define FIRE_COOLING  400
 #define FIRE_SPARKING 40
-#define FIRE_FPS 30
+#define FIRE_FPS 25
 
 #define NONE_FPS 4
 
-#define MAX_CURRENT 12000
-#define NUM_LEDS 240
-#define DATA_PIN 7
+#define POLE
 
 #define STRIP_CONFIG Strips[4]{{ 0, 58 },{ 116,59 },{ 117, 174 },{ 232, 175 }};
 #endif
