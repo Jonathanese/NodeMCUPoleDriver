@@ -29,7 +29,6 @@ uint16_t dithercount = 0;
 uint16_t framecount = 0;
 uint16_t dithercyclecount = 0;
 
-
 void(*Effect)();
 
 void setEffect(void(*NewEffect)(), String EffString)
@@ -46,40 +45,27 @@ String getEffect()
 void LEDSetup()
 {
 	FinalStrip.Begin();
-	FinalStrip.ClearTo(RgbColor(0, 0, 0));
-	FinalStrip.Show();
-	//FastLED.setMaxPowerInVoltsAndMilliamps(5, MAX_CURRENT);
-	//FastLED.setCorrection(TypicalPixelString);
-	//FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(STRIP_LEDs, NUM_LEDS);
-	//FastLED.setMaxRefreshRate(50, true);
-	setFrameRate(4, 50);
+	setFrameRate(NONE_FPS);
 	Foreground = CRGB(32, 0, 0);
 	Effect = SOLID;
 }
 
-
-
 void LEDLoop()
 {
-	
 	if (FrameTimer.repeat(FrameTime))
 	{
 		Effect();
 		framecount++;
-#ifdef DISABLE_DITHER
+#ifdef NO_DITHERING
 		if (FinalStrip.CanShow()) BasicShow();
 #endif
 	}
 
-#ifndef DISABLE_DITHER
+#ifndef NO_DITHERING
 	if (FinalStrip.CanShow())
 	{
-		if (DitherFrameTimer.repeat(DitherFrameTime))
-		{
-			AdvancedShow();
-			dithercount++;
-		}
-
+		AdvancedShow();
+		dithercount++;
 	}
 #endif
 
@@ -102,23 +88,17 @@ void AdvancedShow()
 
 	uint32_t num = (uint32_t)brightness * DITHER_COUNT;
 	uint32_t den = CORRECTION_PRECISION * 255;
-	
+
 	for (uint8_t i; i < NUM_LEDS; i++)
 	{
-		//p_r = PRECISE_RED[STRIP_LEDs[i].r]/257;
-		//p_g = PRECISE_RED[STRIP_LEDs[i].g] / 257;
-		//p_b = PRECISE_RED[STRIP_LEDs[i].b] / 257;
-
 		p_r = PRECISE_RED[STRIP_LEDs[i].r] * num / den;
 		p_r = p_r + d_c;
 		p_r /= DITHER_COUNT;
-		
-		
+
 		p_g = PRECISE_GREEN[STRIP_LEDs[i].g] * num / den;
 		p_g = p_g + d_c;
 		p_g /= DITHER_COUNT;
-		
-		
+
 		p_b = PRECISE_BLUE[STRIP_LEDs[i].b] * num / den;
 		p_b = p_b + d_c;
 		p_b /= DITHER_COUNT;
@@ -156,7 +136,6 @@ void BasicShow()
 		p_g = PRECISE_GREEN[STRIP_LEDs[i].g] * num / den;
 		p_b = PRECISE_BLUE[STRIP_LEDs[i].b] * num / den;
 
-
 		if (p_r > 255) p_r = 255;
 		if (p_g > 255) p_g = 255;
 		if (p_b > 255) p_b = 255;
@@ -183,13 +162,7 @@ void setBrightness(uint8_t newBright)
 
 void setFrameRate(float FPS)
 {
-	setFrameRate(FPS, 100);
-}
-
-void setFrameRate(float FPS, float DitherFPS)
-{
-	FrameTime = 1000.0 / FPS;
-	DitherFrameTime = 1000.0 / DitherFPS;
+	FrameTime = (1000.0 / FPS) - 1;
 }
 
 LEDStrip::LEDStrip(uint8_t start, uint8_t stop)

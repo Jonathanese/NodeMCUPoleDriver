@@ -12,30 +12,7 @@
 
 #define COLOR_ORDER GRB
 #define LED_TYPE WS2812B
-#define DITHER_COUNT 4
 
-/*
-
-This is a stupid unnecessary extra step as for all intents and purposes, these should exist in Config.h.
-
-But for some reason, you get a ton of errors if you don't define them RIGHT HERE.
-
-*/
-
-#ifdef POLE
-#define MAX_CURRENT 12000
-#define NUM_LEDS 240
-#define DATA_PIN 7
-#elif defined CEILING
-#define MAX_CURRENT 10000
-#define NUM_LEDS 240
-#define DATA_PIN 3
-#else
-#define MAX_CURRENT 2000
-#define NUM_LEDS 60
-#define DATA_PIN 3
-
-#endif
 extern StopWatch FrameTimer;
 
 typedef struct LED
@@ -74,7 +51,6 @@ void BasicShow();
 
 void setBrightness(uint8_t newBright);
 void setFrameRate(float FPS);
-void setFrameRate(float FPS, float DFPS);
 
 void SOLID();
 void setEffect(void(*NewEffect)(), String EffString);

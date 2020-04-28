@@ -1,6 +1,6 @@
 #pragma once
 
-#define POLE1
+#define STRIP2
 
 #ifdef POLE1
 #define SECRET_MQTT_STATE_TOPIC "ledstrip/pole1"
@@ -8,31 +8,28 @@
 #define SECRET_MQTT_NAME "pole1"
 
 #define FIREFLIES_CHANCE 2
-#define FIREFLIES_SPEED 20
-#define FIREFLIES_FPS 25
-#define FIREFLIES_DFPS 50
+#define FIREFLIES_SPEED 10
+#define FIREFLIES_FPS 20
 
 #define LIGHTNING_CHANCE 4
-#define LIGHTNING_FPS 25
-#define LIGHTNING_DFPS 100
+#define LIGHTNING_FPS 20
 
 #define COALS_COOLING  100
 #define COALS_SPARKS 2
 #define COALS_SPARK_HEAT 10000
-#define COALS_FPS 25
-#define COALS_DFPS 100
+#define COALS_FPS 20
 
 #define FIRE_COOLING  400
 #define FIRE_SPARKING 40
-#define FIRE_FPS 25
-#define FIRE_DFPS 50
+#define FIRE_FPS 20
 
 #define NONE_FPS 4
-#define NONE_DFPS 40
 
 #define POLE
-#define DISABLE_DITHER
+//#define NO_DITHERING
+#define DITHER_COUNT 3
 
+#define NUM_LEDS 240
 #define STRIP_CONFIG Strips[4]{{ 0, 58 },{ 116,59 },{ 117, 174 },{ 232, 175 }};
 #endif
 
@@ -42,8 +39,8 @@
 #define SECRET_MQTT_NAME "strip1"
 
 #define FIREFLIES_CHANCE 2
-#define FIREFLIES_SPEED 20
-#define FIREFLIES_FPS 15
+#define FIREFLIES_SPEED 10
+#define FIREFLIES_FPS 30
 
 #define LIGHTNING_CHANCE 10
 #define LIGHTNING_FPS 30
@@ -51,7 +48,7 @@
 #define COALS_COOLING  600
 #define COALS_SPARKS 2
 #define COALS_SPARK_HEAT 10000
-#define COALS_FPS 15
+#define COALS_FPS 30
 
 #define FIRE_COOLING  400
 #define FIRE_SPARKING 40
@@ -59,11 +56,14 @@
 
 #define NONE_FPS 4
 
-#define MAX_CURRENT 2000
-#define NUM_LEDS 60
-#define DATA_PIN 5
 
-#define STRIP_CONFIG Strips[2]{{ 29, 0 },{ 30, 59 }};
+#define NUM_LEDS 30
+#define STRIP_CONFIG Strips[1]{{ 0 , 29 }};
+#define DITHER_COUNT 32
+
+//#define NUM_LEDS 60
+//#define STRIP_CONFIG Strips[2]{{ 29, 0 },{ 30, 59 }};
+//#define DITHER_COUNT 8
 
 #endif
 
@@ -79,21 +79,21 @@
 #define LIGHTNING_CHANCE 10
 #define LIGHTNING_FPS 25
 
-#define COALS_COOLING  600
-#define COALS_SPARKS 2
-#define COALS_SPARK_HEAT 10000
+#define COALS_COOLING  200 
+#define COALS_SPARKS 10
+#define COALS_SPARK_HEAT 5000
 #define COALS_FPS 25
 
-#define FIRE_COOLING  400
+#define FIRE_COOLING  550
 #define FIRE_SPARKING 40
 #define FIRE_FPS 25
 
 #define NONE_FPS 4
-
-#define CEILING
+#define DITHER_COUNT 4
 
 //#define STRIP_CONFIG Strips[2]{{ 29, 0 },{ 30, 59 }};
-#define STRIP_CONFIG Strips[1]{{ 0, 240 }};
+#define NUM_LEDS 240
+#define STRIP_CONFIG Strips[2]{{ 119, 0 }, {120, 239}};
 
 #endif
 

@@ -1,4 +1,4 @@
-float gamma   = 2.2; // Correction factor
+float gamma   = 2.0; // Correction factor
 int   max_in  = 255, // Top end of INPUT range
       max_out = 65535, // Top end of OUTPUT range
       r = 255,
@@ -13,6 +13,7 @@ void setup() {
   if(r>scalar) scalar = r;
   if(g>scalar) scalar = g;
   if(b>scalar) scalar = b;
+  file.println("#pragma once");
   file.print("#define CORRECTION_PRECISION ");
   file.println((int)(max_out/max_in));
   addArray("PRECISE_RED", max_out*r/scalar);
@@ -26,7 +27,7 @@ void setup() {
 
 void addArray(String name, float max)
 {
-    file.print("const uint16_t PROGMEM ");
+    file.print("const uint16_t ");
     file.print(name);
     file.print("[] = {");
   for(int i=0; i<=max_in; i++) {
