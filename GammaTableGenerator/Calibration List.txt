@@ -1,0 +1,29 @@
+White: 128
+
+
+Red: 255
+Green: 203
+Blue: 155
+Brightness: 195
+
+
+
+16-bit:
+
+White: 32768
+
+Red: 49725
+Green: 39585
+Blue: 30225
+
+
+
+16-bit calibrated:
+
+Red: 65535
+Green: 52171
+Blue: 39835
+
+White: 43187
+
+

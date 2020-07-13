@@ -31,8 +31,11 @@ public:
 	uint16_t getParam(int idx);
 	LED* LEDs;
 	uint8_t size;
-
+#ifdef RGBW
+	NeoPixelBus<NeoGrbwFeature, Neo800KbpsMethod>* strip;
+#else
 	NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod>* strip;
+#endif
 };
 
 extern bool stateOn;

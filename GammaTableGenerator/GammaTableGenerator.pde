@@ -1,9 +1,10 @@
-float gamma   = 2.0; // Correction factor
-int   max_in  = 255, // Top end of INPUT range
+float gamma   = 2.2; // Correction factor
+long  max_in  = 255, // Top end of INPUT range
       max_out = 65535, // Top end of OUTPUT range
-      r = 255,
-      g = 224,
-      b = 140;
+      r = 49725,
+      g = 39585,
+      b = 30225,
+      w = 32768;
 
 PrintWriter file;
 
@@ -13,12 +14,19 @@ void setup() {
   if(r>scalar) scalar = r;
   if(g>scalar) scalar = g;
   if(b>scalar) scalar = b;
+  if(w>scalar) scalar = w;
   file.println("#pragma once");
   file.print("#define CORRECTION_PRECISION ");
   file.println((int)(max_out/max_in));
-  addArray("PRECISE_RED", max_out*r/scalar);
-  addArray("PRECISE_GREEN", max_out*g/scalar);
-  addArray("PRECISE_BLUE", max_out*b/scalar);
+  file.print("#define CORRECTION_R ");
+  file.println((int)(r*max_in/scalar));
+  file.print("#define CORRECTION_G ");
+  file.println((int)(g*max_in/scalar));
+  file.print("#define CORRECTION_B ");
+  file.println((int)(b*max_in/scalar));
+  file.print("#define CORRECTION_W ");
+  file.println((int)(w*max_in/scalar));
+  addArray("GAMMA_LUT", max_out);
   
   file.flush();
   file.close();
