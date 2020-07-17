@@ -155,7 +155,7 @@
 #define FIRE_FPS 25
 
 #define NONE_FPS 4
-#define DITHER_COUNT 3
+#define DITHER_COUNT 2
 
 #define IS_RGBW
 

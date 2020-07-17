@@ -87,38 +87,38 @@ void LEDLoop()
 
 void AdvancedShow()
 {
-	static uint32_t d_c;
-	static uint32_t p_r;
+	static uint32_t d_c; //Counter for dithering. Used to alter how things are rounded when we divide.
+	static uint32_t p_r; //Temporary values for processing channels
 	static uint32_t p_g;
 	static uint32_t p_b;
 #ifdef IS_RGBW
-	static uint32_t p_w;
+	static uint32_t p_w; //White channel only necessary for RGBW LEDs
 #endif
 
-	//Numerator and Denominator are separated for integer division. Avoids float->int conversion erros.
+	//Numerator and Denominator are separated for integer division. Put as many constants up here as possible to save on calculations during the FOR loop.
 	uint32_t num = (uint32_t)brightness * DITHER_COUNT;
 	uint32_t den = CORRECTION_PRECISION * 255;
 
 	for (uint8_t i = 0; i < NUM_LEDS; i++)
 	{
 
-		//Use LUT to convert exponential space to final, linear space
+		//Perform gamma correction to convert the desired perceived brightness into actual brightness values
 
 		p_r = (uint32_t)GAMMA_LUT[STRIP_LEDs[i].r];
 		p_g = (uint32_t)GAMMA_LUT[STRIP_LEDs[i].g];
 		p_b = (uint32_t)GAMMA_LUT[STRIP_LEDs[i].b];
 
-
+		//We are now in "Linear Space". Averaging, subtracting, and scaling values will all produce correct results.
 
 		
 #ifdef IS_RGBW
 		//Subtract white values while in linear space
-		p_w = min(p_r, min(p_g, p_b));
-		p_r = p_r - p_w;
+		p_w = min(p_r, min(p_g, p_b)); //The minimum of the 3 channels is the amount of "whiteness" that can be removed
+		p_r = p_r - p_w; //Remove the redundant "whiteness" from the RGB values
 		p_g = p_g - p_w;
 		p_b = p_b - p_w;
 
-
+		//These are the same steps as below. I am just performing them on White all at once right here.
 		p_w = p_w * CORRECTION_W / 255;
 		p_w = p_w * num / den;
 		p_w = p_w + d_c;
@@ -127,27 +127,29 @@ void AdvancedShow()
 #endif
 
 
-
+		//Scale values according to color correction / white balance
 		p_r = p_r * CORRECTION_R / 255;
 		p_g = p_g * CORRECTION_G / 255;
 		p_b = p_b * CORRECTION_B / 255;
 
 
-
+		// Take out most of the constants. This will bring us to our final values X the number of dithering steps.
 		p_r = p_r * num / den;
 		p_g = p_g * num / den;
 		p_b = p_b * num / den;
 
 
-
+		//Increment the dithering steps. That way when we finally divide out DITHER_COUNT, we will get rounding results that change depending on where the actual value lies between the discrete values.
 		p_r = p_r + d_c;
 		p_g = p_g + d_c;
 		p_b = p_b + d_c;
 
+		//Divide by the dither count to get the final 0-255 values.
 		p_r /= DITHER_COUNT;
 		p_g /= DITHER_COUNT;
 		p_b /= DITHER_COUNT;
 
+		//Sometimes the integer math may produce results like 256. Clamp these to 255 to avoid wraparound.
 		if (p_b > 255) p_b = 255;
 		if (p_g > 255) p_g = 255;
 		if (p_r > 255) p_r = 255;
